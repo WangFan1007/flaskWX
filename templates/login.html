@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .imgbox{
+            width: 200px;
+            margin: auto;
+        }
+        h1{
+            text-align: center;
+        }
+        img{
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="imgbox">
+   <h1>扫码登录</h1>
+    <img id="avatar" class="img" mm-error="qrcodeException()" ng-class="{'qrcode_expired': isNeedRefresh}" mm-src="https://login.weixin.qq.com/qrcode/YZzJoEn6RA==" mm-src-load="qrcodeLoad" mm-src-parallel="" mm-src-timeout="10" mm-src-retry-count="2" src="https://login.weixin.qq.com/qrcode/{{qcode}}">
+
+    <script>
+        $(function () {
+            checkLogin();
+        });
+
+        function checkLogin() {
+            $.ajax({
+                url:"/check_login",
+                method:"GET",
+                dataType:"json",
+                success:function (args) {
+                    if (args.code === 408) {
+                        checkLogin();
+                    }
+                    else if (args.code === 201) {
+                        $('#avatar').attr('src',args.avatar)
+                        checkLogin();
+                    }
+                    else if (args.code === 200) {
+                        location.href = '/index'
+                    }
+
+
+                }
+            })
+        }
+    </script>
+</div>
+</body>
+</html>
